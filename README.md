@@ -7,10 +7,10 @@ It enables tracking lead dynamics, forecasting future values, and detecting anom
 
 ## 📊 Key Features
 
-KPI cards (Leads, CPL, ROI)
-Lead forecasting through the end of 2025
-Anomaly detection using Z-score
-Automated analytics and recommendation section
+- KPI cards (Leads, CPL, ROI)
+- Lead forecasting through the end of 2025
+- Anomaly detection using Z-score
+- Automated analytics and recommendation section
 
 ---
 
@@ -18,23 +18,23 @@ Automated analytics and recommendation section
 
 ### Frontend
 
-HTML5
-TailwindCSS
-JavaScript (Fetch API, Chart.js)
+- HTML5
+- TailwindCSS
+- JavaScript (Fetch API, Chart.js)
 
 ### Backend
 
-Python 3.12
-FastAPI
-Pandas
-Joblib
-Prophet / sklearn-compatible forecasting model
+- Python 3.12
+- FastAPI
+- Pandas
+- Joblib
+- Prophet / sklearn-compatible forecasting model
 
 ### Infrastructure
 
-Docker + Docker Compose
-Render (Web Service deployment)
-Git + GitHub (version control)
+- Docker + Docker Compose
+-Render (Web Service deployment)
+- Git + GitHub (version control)
 
 ---
 
@@ -245,6 +245,7 @@ RESPOND_client_dashboard/
 Проект полностью функционален и готов к демонстрации.
 Интерфейс и API соответствуют техническому заданию.
 Дашборд успешно задеплоен и доступен по публичному URL-адресу Render.
+
 
 
 

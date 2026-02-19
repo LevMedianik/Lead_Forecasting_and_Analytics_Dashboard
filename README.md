@@ -15,12 +15,15 @@ Automated analytics and recommendation section
 ---
 
 ## 🧩 Tech Stack
+
 ### Frontend
 
 HTML5
 TailwindCSS
 JavaScript (Fetch API, Chart.js)
-Backend
+
+### Backend
+
 Python 3.12
 FastAPI
 Pandas
@@ -242,6 +245,7 @@ RESPOND_client_dashboard/
 Проект полностью функционален и готов к демонстрации.
 Интерфейс и API соответствуют техническому заданию.
 Дашборд успешно задеплоен и доступен по публичному URL-адресу Render.
+
 
 
 

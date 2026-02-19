@@ -65,7 +65,7 @@ http://localhost:8000
 
 ---
 
-### 🧠 API Endpoints
+## 🧠 API Endpoints
 Endpoint	Method	Description
 ```
 /	GET	Dashboard main page
@@ -77,7 +77,7 @@ Endpoint	Method	Description
 
 ---
 
-### 🧱 Project Architecture
+## 🧱 Project Architecture
 ```
 RESPOND_client_dashboard/
 │
@@ -105,7 +105,7 @@ RESPOND_client_dashboard/
 
 ---
 
-### ☁️ Deployment
+## ☁️ Deployment
 
 The application is deployed on Render.com as a Web Service.  
 The container uses the Dockerfile from the infra directory.  
@@ -114,7 +114,7 @@ Static files are served directly via FastAPI StaticFiles.
 
 ---
 
-### 🧠 Implementation Details & Optimizations
+## 🧠 Implementation Details & Optimizations
 
 CORS configuration implemented for proper frontend–backend communication.  
 Fixed relative paths for Docker and Render environments.  
@@ -124,7 +124,7 @@ Forecasting model preloaded at application startup to minimize runtime overhead.
 
 ---
 
-### ✅ Result
+## ✅ Result
 
 The project is fully functional and production-ready for demonstration.  
 Frontend and API align with technical requirements.  
@@ -132,6 +132,9 @@ Successfully deployed and accessible via public Render URL.
 Demonstrates practical ML integration into a business analytics workflow.  
 
 ---
+
+## Note
+The project is available in Russian only; English localization will be implemented in the future.  
 
 # RU: RE:SPOND Client Dashboard
 
@@ -172,24 +175,28 @@ Demonstrates practical ML integration into a business analytics workflow.
 
 ## ⚙️ Установка и запуск
 
-### 1. Клонирование репозитория
-
+1. Клонирование репозитория
+```
 git clone https://github.com/LevMedianik/RESPOND_client_dashboard.git
 cd RESPOND_client_dashboard
-
-### 2. Создание и настройка окружения
-
+```
+2. Создание и настройка окружения
+```
 cp .env.example .env (при необходимости добавьте переменные окружения)
-
-### 3. Запуск локально через Docker Compose
-
+```
+3. Запуск локально через Docker Compose
+```
 cd infra
 docker-compose build
 docker-compose up
-
+```
 
 После сборки приложение будет доступно по адресу:
+```
 http://localhost:8000
+```
+
+---
 
 ## 🧠 API-эндпоинты
 
@@ -201,6 +208,7 @@ http://localhost:8000
 | `/anomalies?metric=cpl&k=2.5` | **GET** | Детекция аномалий по Z-score |
 | `/health` | **GET** | Проверка состояния сервера |
 
+---
 
 ## 🧱 Архитектура проекта
 ```
@@ -227,11 +235,16 @@ RESPOND_client_dashboard/
 ├── requirements.txt            # Python-зависимости
 └── README.md                   # Описание проекта
 ```
+
+---
+
 ## ☁️ Деплой
 
 Приложение развёрнуто на Render.com как Web Service.
 Контейнер использует Dockerfile из директории infra.
 Путь к фронтенду (frontend/) монтируется как /static, что обеспечивает корректную загрузку всех ресурсов.
+
+---
 
 ## 🧠 Особенности реализации и оптимизации
 
@@ -240,18 +253,15 @@ RESPOND_client_dashboard/
 Оптимизирована загрузка модели и CSV-файлов для минимизации времени отклика.
 Все статические ресурсы раздаются напрямую из контейнера через StaticFiles.
 
+---
+
 ## ✅ Результат
 
 Проект полностью функционален и готов к демонстрации.
 Интерфейс и API соответствуют техническому заданию.
 Дашборд успешно задеплоен и доступен по публичному URL-адресу Render.
 
+---
 
-
-
-
-
-
-
-
-
+## Примечание
+Язык проекта только русский, английская локализация будет внедрена в будущем

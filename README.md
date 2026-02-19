@@ -1,6 +1,6 @@
 # EN: RE:SPOND Client Dashboard
 
-A web-based analytics dashboard for visualizing and monitoring key business metrics of RE:SPOND.
+A web-based analytics dashboard for visualizing and monitoring key business metrics of RE:SPOND.  
 It enables tracking lead dynamics, forecasting future values, and detecting anomalies in CPL.
 
 ---
@@ -107,29 +107,29 @@ RESPOND_client_dashboard/
 
 ### ☁️ Deployment
 
-The application is deployed on Render.com as a Web Service.
-The container uses the Dockerfile from the infra directory.
-The frontend directory is mounted as /static to ensure proper resource loading.
-Static files are served directly via FastAPI StaticFiles.
+The application is deployed on Render.com as a Web Service.  
+The container uses the Dockerfile from the infra directory.  
+The frontend directory is mounted as /static to ensure proper resource loading.  
+Static files are served directly via FastAPI StaticFiles.  
 
 ---
 
 ### 🧠 Implementation Details & Optimizations
 
-CORS configuration implemented for proper frontend–backend communication.
-Fixed relative paths for Docker and Render environments.
-Optimized model and CSV loading to reduce response latency.
-Static resources are served directly from the container for improved performance.
-Forecasting model preloaded at application startup to minimize runtime overhead.
+CORS configuration implemented for proper frontend–backend communication.  
+Fixed relative paths for Docker and Render environments.  
+Optimized model and CSV loading to reduce response latency.  
+Static resources are served directly from the container for improved performance.  
+Forecasting model preloaded at application startup to minimize runtime overhead.  
 
 ---
 
 ### ✅ Result
 
-The project is fully functional and production-ready for demonstration.
-Frontend and API align with technical requirements.
-Successfully deployed and accessible via public Render URL.
-Demonstrates practical ML integration into a business analytics workflow.
+The project is fully functional and production-ready for demonstration.  
+Frontend and API align with technical requirements.  
+Successfully deployed and accessible via public Render URL.  
+Demonstrates practical ML integration into a business analytics workflow.  
 
 ---
 
@@ -245,6 +245,7 @@ RESPOND_client_dashboard/
 Проект полностью функционален и готов к демонстрации.
 Интерфейс и API соответствуют техническому заданию.
 Дашборд успешно задеплоен и доступен по публичному URL-адресу Render.
+
 
 
 

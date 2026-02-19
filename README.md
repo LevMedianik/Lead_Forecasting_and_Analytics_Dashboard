@@ -33,8 +33,59 @@ It enables tracking lead dynamics, forecasting future values, and detecting anom
 ### Infrastructure
 
 - Docker + Docker Compose
--Render (Web Service deployment)
+- Render (Web Service deployment)
 - Git + GitHub (version control)
+
+---
+
+## ✅ Model Validation & Forecasting Logic
+### Forecasting Approach  
+The lead forecasting component is based on a supervised time-series modeling approach. Historical monthly lead data is transformed into a structured dataset with temporal features (trend components, seasonality indicators, and rolling statistics).  
+
+The forecasting model (Prophet / sklearn-compatible regressor) captures:
+
+- Long-term growth or decline trends
+- Seasonal fluctuations
+- Short-term variability
+
+The trained model is serialized (forecast.pkl) and preloaded at application startup to ensure low-latency inference in production.
+
+### Validation Strategy  
+
+To ensure model reliability, the following validation steps were applied:
+
+Train–validation split using time-aware separation (no random shuffling).  
+Backtesting on historical periods to evaluate stability.  
+Error metrics evaluation, including:  
+
+- MAE (Mean Absolute Error)
+- MAPE (Mean Absolute Percentage Error)
+- RMSE (Root Mean Squared Error)
+
+This prevents data leakage and provides realistic performance estimates for future projections.
+
+### Anomaly Detection Logic
+
+CPL anomaly detection is implemented using a statistical Z-score method:
+
+𝑍 = 𝑥 − 𝜇 / 𝜎
+​
+Where:  
+
+𝑥 – current metric value  
+𝜇 – rolling mean  
+𝜎 – rolling standard deviation  
+
+A configurable threshold (default: 2.5) determines whether a data point is flagged as an anomaly.
+
+This lightweight statistical approach ensures interpretability and transparency while remaining computationally efficient.
+
+### Production Considerations
+The forecasting model is loaded once at service startup to avoid repeated disk I/O.
+Data preprocessing is deterministic and reproducible.
+API endpoints are designed to separate computation from visualization logic.
+
+The system allows future replacement of the forecasting model without frontend changes.
 
 ---
 
@@ -173,6 +224,58 @@ The project is available in Russian only; English localization will be implement
 
 ---
 
+## ✅ Логика валидации модели и прогнозирования
+### Подход к прогнозированию
+
+Модуль прогнозирования лидов основан на методе супервизируемого моделирования временных рядов. Исторические месячные данные преобразуются в структурированный датасет с временными признаками (тренд, сезонность, скользящие статистики).
+
+Модель прогнозирования (Prophet / sklearn-совместимый регрессор) учитывает:
+
+- Долгосрочный тренд роста или снижения
+- Сезонные колебания
+- Краткосрочную вариативность
+Обученная модель сериализуется (forecast.pkl) и загружается при старте приложения для обеспечения низкой задержки в продакшене.
+
+### Стратегия валидации
+
+Для обеспечения надёжности прогноза применялись следующие подходы:
+
+- Time-aware разделение train/validation (без случайного перемешивания данных)
+- Backtesting на исторических периодах
+
+### Оценка метрик качества:
+
+- MAE (средняя абсолютная ошибка)
+- MAPE (средняя абсолютная процентная ошибка)
+- RMSE (среднеквадратичная ошибка)
+
+Это исключает утечку данных и обеспечивает реалистичную оценку качества прогноза.
+
+### Логика обнаружения аномалий
+
+Обнаружение аномалий CPL реализовано на основе статистического метода Z-score:
+
+𝑍 = 𝑥 − 𝜇 / 𝜎
+
+Где:
+
+𝑥 – текущее значение показателя
+𝜇 – скользящее среднее
+𝜎 – скользящее стандартное отклонение
+
+Порог (по умолчанию 2.5) задаёт уровень чувствительности обнаружения аномалий.
+
+Метод обеспечивает интерпретируемость, прозрачность и низкую вычислительную нагрузку.
+
+### Продакшн-аспекты
+
+Модель загружается один раз при запуске сервиса.  
+Предобработка данных детерминирована и воспроизводима.  
+Логика вычислений отделена от логики визуализации.  
+Архитектура позволяет заменить модель без изменения frontend-части.
+
+---
+
 ## ⚙️ Установка и запуск
 
 1. Клонирование репозитория
@@ -265,3 +368,4 @@ RESPOND_client_dashboard/
 
 ## Примечание
 Язык проекта только русский, английская локализация будет внедрена в будущем
+

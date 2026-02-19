@@ -70,7 +70,7 @@ CPL anomaly detection is implemented using a statistical Z-score method:
 
 𝑍 = 𝑥 − 𝜇 / 𝜎  
   ​
-Where:
+Where:  
   
 𝑥 – current metric value  
 𝜇 – rolling mean  
@@ -368,6 +368,7 @@ RESPOND_client_dashboard/
 
 ## Примечание
 Язык проекта только русский, английская локализация будет внедрена в будущем
+
 
 
 

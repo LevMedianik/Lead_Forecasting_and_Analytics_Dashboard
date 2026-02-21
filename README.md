@@ -37,6 +37,8 @@ The time series is transformed into a supervised learning format using:
 
 Metrics are averaged across folds (mean ± std).
 
+Implemented **Recursive Multi-Step Forecasting** to produce a 168-hour forecast, a recursive strategy is applied: the model predicts one step ahead (t+1), and the predicted value is fed back as a lag feature to generate the next step. This process is repeated until the full forecast horizon is reached. This approach enables multi-step forecasting using standard regression models, though it may accumulate error over longer horizons.
+
 ---
 
 ### Evaluation Metrics
@@ -237,6 +239,8 @@ The dashboard is fully functional and ready for demonstration.
 - исключён data leakage  
 
 Метрики усредняются по фолдам (mean ± std).
+
+Внедрено **рекурсивное многошаговое прогнозирование (Recursive Multi-Step Forecasting)**. Иными словами, для прогноза на 168 часов используется рекурсивная стратегия: модель обучается предсказывать один шаг вперёд (t+1), после чего полученное значение используется как входной лаг для расчёта следующего шага. Процесс повторяется до достижения заданного горизонта. Такой подход позволяет использовать стандартные регрессионные модели для многошагового прогнозирования, однако может приводить к накоплению ошибки по мере увеличения горизонта.
 
 ---
 

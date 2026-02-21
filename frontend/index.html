@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>RE:SPOND — Dashboard клиента</title>
+  <title>Дашборд прогнозирования и аналитики лидов</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,19 +16,17 @@
   <!-- Фон -->
   <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('static/bg.png'); z-index:-1;"></div>
 
-  <!-- Логотип -->
-  <img src="/static/logo.png" alt="logo" class="absolute top-6 left-10 h-32 w-auto" />
 
   <!-- Контент -->
-  <h1 class="text-6xl font-bold text-orange-500 mt-10">
-    Dashboard клиента <span class="font-extrabold">RE:SPOND</span>
+  <h1 class="text-4xl md:text-5xl font-bold text-orange-500 mt-36 mb-6">
+    Дашборд прогнозирования и аналитики лидов
   </h1>
-  <div class="w-40 h-2 bg-orange-500 rounded my-6"></div>
-  <p class="text-2xl text-orange-600 max-w-4xl mx-auto leading-relaxed">
-    Ваши цифры говорят сами за себя. RE:SPOND помогает увидеть динамику лидов, 
-    контролировать CPL и ROI, а также думать на шаг вперёд. Dashboard не только фиксирует текущие показатели, 
-    но и строит прогнозы, позволяя корректировать стратегию ещё до того, как возникнут риски.
-  </p>
+    <div class="w-40 h-2 bg-orange-500 rounded my-6"></div>
+    <p class="text-2xl text-orange-600 max-w-4xl mx-auto leading-relaxed">
+      Ваши данные отражают динамику бизнеса.
+      Дашборд позволяет отслеживать количество лидов, контролировать CPL и ROI, а также строить краткосрочные прогнозы на основе моделей временных рядов.
+      Система не только фиксирует текущие показатели, но и выявляет аномальные отклонения и потенциальные риски, помогая принимать обоснованные решения заранее.
+    </p>
   <a href="#dashboard" class="mt-12 px-10 py-5 text-2xl text-white font-semibold rounded-full 
      bg-gradient-to-r from-orange-400 to-orange-500 shadow hover:scale-105 transition">
     Перейти к показателям
@@ -76,16 +74,16 @@
       <!-- Отдельные карточки -->
       <div class="space-y-4 mt-2">
         <div class="kpi-card accent-border">
-          <div class="kpi-title">Месяц</div>
-          <div class="kpi-value" id="anomalyMonth">2023-02</div>
+          <div class="kpi-title">Дата и время аномалии</div>
+          <div class="kpi-value" id="anomalyMonth">—</div>
         </div>
         <div class="kpi-card accent-border">
-          <div class="kpi-title">Значение</div>
-          <div class="kpi-value" id="anomalyValue">29.66</div>
+          <div class="kpi-title">CPL (в этот час)</div>
+          <div class="kpi-value" id="anomalyValue">—</div>
         </div>
         <div class="kpi-card accent-border">
           <div class="kpi-title">Z-score</div>
-          <div class="kpi-value" id="anomalyZscore">-2.87</div>
+          <div class="kpi-value" id="anomalyZscore">—</div>
         </div>
       </div>
 
@@ -102,7 +100,7 @@
 
     <!-- Подвал -->
     <footer class="h-[50px] flex items-center justify-center text-sm text-gray-500 border-t bg-white mt-10">
-      © 2025 — RE:SPOND Dashboard клиента
+      © 2025 – Дашборд прогнозирования и аналитики лидов
     </footer>
 
   <script src="/static/script.js"></script>

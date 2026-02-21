@@ -137,3 +137,10 @@ a[href="#dashboard"]:hover {
   background: #fff;
   border-top: 1px solid #eee;
 }
+
+/* Контейнер с тремя колонками */
+@media (min-width: 1024px) {
+  #dashboard > .grid {
+    grid-template-columns: 0.7fr 2.2fr 0.7fr !important;
+  }
+}

@@ -4,9 +4,10 @@ import pandas as pd
 import joblib
 import os
 from pathlib import Path
-from backend.ml.features import make_features
+from backend.ml.features import recursive_forecast
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
+from backend.ml.anomalies import detect_hourly_anomalies
 
 DATA_HOURLY = Path("backend/data/respond_hourly.csv")
 DATA_MONTHLY = Path("backend/data/respond.csv")
@@ -47,49 +48,134 @@ def metrics(n: int = 12):
     data = df.tail(n).to_dict(orient="records")
     return {"data": data}
 
-
 @app.get("/forecast")
-def forecast():
-    """Прогноз по лидам до декабря 2025"""
+
+def forecast(horizon_hours: int = 168, history_hours: int = 24 * 14):
+    """
+    Forecast leads for the next horizon_hours using:
+    - Prophet: direct predict on future timestamps
+    - sklearn/boosting: correct recursive multi-step forecast (updates lags/rolling)
+    
+    Returns:
+      - actual_hourly: last history_hours points
+      - forecast_hourly: next horizon_hours points
+      - forecast_monthly: monthly sum of the forecast (for compatibility with old UI)
+    """
     if model is None:
         return JSONResponse(status_code=500, content={"error": "Модель не загружена"})
 
-    df = pd.read_csv(DATA_HOURLY, parse_dates=["datetime"]).set_index("datetime")
-    last_date = df.index.max()
-    end_date = pd.Timestamp("2025-12-31 23:00:00")
+    df = pd.read_csv(DATA_HOURLY, parse_dates=["datetime"]).set_index("datetime").sort_index()
 
-    # Prophet или sklearn-like модель
+    # берём историю для recursive (нужно минимум max(window, lag) значений; у нас окна до 168)
+    # поэтому для устойчивости берём хотя бы max(history_hours, 24*14)
+    history_hours = max(history_hours, 24 * 14)
+    df_hist = df.tail(history_hours).copy()
+
+    # --------- PROPHET ----------
     if "prophet" in str(type(model)).lower():
-        from prophet import Prophet
-        future = pd.date_range(last_date + pd.Timedelta(hours=1), end_date, freq="H")
+        future = pd.date_range(
+            df_hist.index.max() + pd.Timedelta(hours=1),
+            periods=horizon_hours,
+            freq="H",
+        )
         future_df = pd.DataFrame({"ds": future})
-        forecast_df = model.predict(future_df)[["ds", "yhat"]].rename(
+        fcst = model.predict(future_df)[["ds", "yhat"]].rename(
             columns={"ds": "datetime", "yhat": "leads_forecast"}
         )
+        forecast_hourly = fcst.copy()
+        forecast_hourly["datetime"] = pd.to_datetime(forecast_hourly["datetime"])
+
+    # --------- SKLEARN / BOOSTING ----------
     else:
-        horizon = int((end_date - last_date).total_seconds() // 3600)
-        X, y, X_future = make_features(df, horizon=horizon)
-        y_pred = model.predict(X_future)
-        forecast_df = pd.DataFrame({"datetime": X_future.index, "leads_forecast": y_pred})
+        # recursive multi-step forecast (correct for lag/rolling models)
+        fcst_df = recursive_forecast(
+            model=model,
+            df_hist=df_hist[["leads"]],
+            horizon_hours=horizon_hours,
+        )
+        forecast_hourly = fcst_df.reset_index().rename(
+            columns={"datetime": "datetime", "leads_pred": "leads_forecast"}
+        )
+        forecast_hourly["datetime"] = pd.to_datetime(forecast_hourly["datetime"])
 
-    # --- агрегируем по месяцам ---
-    forecast_df["month"] = forecast_df["datetime"].dt.to_period("M")
-    df_monthly = forecast_df.groupby("month")["leads_forecast"].sum().reset_index()
+    # --------- ACTUAL (for chart) ----------
+    actual_hourly = df_hist.reset_index()[["datetime", "leads"]].copy()
+    actual_hourly["datetime"] = pd.to_datetime(actual_hourly["datetime"])
 
-    # берём только полные месяцы после last_date
-    first_full_month = (last_date + pd.offsets.MonthBegin(1)).to_period("M")
-    df_monthly = df_monthly[df_monthly["month"] >= first_full_month]
-    df_monthly["month"] = df_monthly["month"].astype(str)
+    # align to "now" for demo purposes (optional)
+    align_to_now = True
+    if align_to_now:
+        now = pd.Timestamp.now().floor("H")
+        max_actual = actual_hourly["datetime"].max()
+        delta = now - max_actual
+        actual_hourly["datetime"] = actual_hourly["datetime"] + delta
+        forecast_hourly["datetime"] = forecast_hourly["datetime"] + delta
 
-    return {"forecast_monthly": df_monthly.to_dict(orient="records")}
+    # --------- MONTHLY AGG (compatibility) ----------
+    tmp = forecast_hourly.copy()
+    tmp["month"] = tmp["datetime"].dt.to_period("M").astype(str)
+    forecast_monthly = (
+        tmp.groupby("month")["leads_forecast"]
+        .sum()
+        .reset_index()
+        .to_dict(orient="records")
+    )
 
+    return {
+        "actual_hourly": actual_hourly.to_dict(orient="records"),
+        "forecast_hourly": forecast_hourly.to_dict(orient="records"),
+        "forecast_monthly": forecast_monthly,
+        "meta": {
+            "model": type(model).__name__,
+            "horizon_hours": horizon_hours,
+            "history_hours": history_hours,
+        },
+    }
+
+@app.get("/kpi")
+def kpi(window_hours: int = 24):
+    """
+    KPI только по факту за последние window_hours.
+    Без расчёта прогноза.
+    """
+    df = pd.read_csv(DATA_HOURLY, parse_dates=["datetime"]).set_index("datetime").sort_index()
+
+    hist = df.tail(window_hours)
+
+    return {
+        "kpi": {
+            "leads_24h": int(hist["leads"].sum()),
+            "cpl_24h": round(float(hist["cpl"].mean()), 2),
+            "roi_24h": round(float(hist["roi"].mean()), 3),
+        }
+    }
 
 @app.get("/anomalies")
-def anomalies(metric: str = "cpl", k: float = 2.5):
-    """Детекция аномалий (Z-score)"""
-    df = pd.read_csv(DATA_MONTHLY)
-    mean, std = df[metric].mean(), df[metric].std()
-    df["z_score"] = (df[metric] - mean) / std
-    df["month"] = df["month"].astype(str)
-    anomalies = df.loc[df["z_score"].abs() > k, ["month", metric, "z_score"]]
-    return {"anomalies": anomalies.to_dict(orient="records")}
+def anomalies(
+    metric: str = "cpl",
+    k: float = 2.5,
+    window_hours: int = 24 * 7,
+    lookback_hours: int = 24 * 14,
+    align_to_now: bool = True,
+):
+    df = detect_hourly_anomalies(
+        metric=metric,
+        k=k,
+        window_hours=window_hours,
+        lookback_hours=lookback_hours,
+    )
+
+    # --- Сдвиг времени к текущему моменту ---
+    if align_to_now and not df.empty:
+        now = pd.Timestamp.now().floor("H")
+        max_ts = df["datetime"].max()
+        delta = now - max_ts
+        df["datetime"] = df["datetime"] + delta
+
+    return {
+        "metric": metric,
+        "k": k,
+        "window_hours": window_hours,
+        "lookback_hours": lookback_hours,
+        "anomalies": df.to_dict(orient="records"),
+    }
